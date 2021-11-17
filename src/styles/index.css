@@ -13,6 +13,10 @@ body{
   margin-bottom: 20px;
 }
 
+.far.fa-eye{
+  cursor: pointer;
+}
+
 .wrapp{
   margin: 20px auto 0;
   width: 80%;
@@ -59,7 +63,6 @@ button span{
   justify-content: space-between;
   font-size: 15px;  
   align-items: center;
-
 }
 
 .header h2,
@@ -78,7 +81,6 @@ button span{
   width: 40px;
   height: 40px;
 }
-
 
 .wrapper-list{
   display: flex;

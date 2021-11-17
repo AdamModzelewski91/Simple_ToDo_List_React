@@ -9,12 +9,27 @@ export default class App extends Component{
     category: '',
     rate: '',
     watched: '',
-    watchNumber: 0,
-    watchedNumber: 0,
+    watchNumber: 1,
+    watchedNumber: 1,
   }
 
   static defaultProps ={
-    movieBase:[]
+    movieBase:[
+      {
+        id: 1, 
+        name: 'Godzilla',
+        categ: 'Si-Fi', 
+        rating: '4', 
+        watch: 'true'
+      },
+      {
+        id: 2, 
+        name: 'The Batman',
+        categ: 'Action', 
+        rating: '5', 
+        watch: 'false'
+      },
+    ]
   }
 
   handleInput= (e) =>{
@@ -24,6 +39,13 @@ export default class App extends Component{
     })
   }
 
+  UNSAFE_componentWillMount() {
+    const output = this.props.movieBase
+    this.setState({
+      output 
+    })
+  }
+  
   handleAddMovie = () =>{  
     const {movieBase} = this.props
     const {input, category, rate, watched} = this.state
@@ -51,7 +73,7 @@ export default class App extends Component{
         output: this.props.movieBase
       })
     }
-      else {
+      else if (watch !== undefined) {
         movieBase = movieBase.filter(single => single.watch === watch)
         this.setState({
           output: movieBase

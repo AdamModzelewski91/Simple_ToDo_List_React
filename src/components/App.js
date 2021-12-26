@@ -9,8 +9,8 @@ export default class App extends Component{
     category: '',
     rate: '',
     watched: '',
-    watchNumber: 1,
-    watchedNumber: 1,
+    watchNumber: '1',
+    watchedNumber: '1',
   }
 
   static defaultProps ={
@@ -39,17 +39,34 @@ export default class App extends Component{
     })
   }
 
-  UNSAFE_componentWillMount() {
-    const output = this.props.movieBase
-    this.setState({
-      output 
+  componentDidMount() {         
+    if (localStorage.getItem('newItem') !== null){      
+      const retrivedObject = JSON.parse(localStorage.getItem('newItem')) 
+      this.props.movieBase.splice(0) 
+      this.props.movieBase.push(...retrivedObject)     
+      const watchNumber = retrivedObject.filter(single => single.watch === 'false').length
+      const watchedNumber = retrivedObject.filter(single => single.watch === 'true').length 
+      this.setState({
+      watchNumber,
+      watchedNumber,          
+      output: retrivedObject
     })
+    } else {      
+      const output = this.props.movieBase
+      this.setState({
+        output 
+      })
+    }   
+  }
+
+  saveToLocalStorage = () => {
+    localStorage.setItem('newItem', JSON.stringify(this.props.movieBase))
   }
   
   handleAddMovie = () =>{  
     const {movieBase} = this.props
     const {input, category, rate, watched} = this.state
-    if (input === '' || category === '' || rate === '' || watched === '' ) return alert('uzupełnij pola')  
+    if (input === '' || category === '' || rate === '' || watched === '' ) return alert('Fill all filds')  
     const newID = movieBase.length + 1
     movieBase.push({id: newID, name: input, categ: category, rating: rate, watch: watched}) 
     const watchNumber = movieBase.filter(single => single.watch === 'false').length
@@ -63,20 +80,21 @@ export default class App extends Component{
       rate: '',
       watched: '',      
     })
+    this.saveToLocalStorage()
   }  
 
   handleFiltrMovies (e) {    
-    let movieBase = [...this.props.movieBase]
+    let output = [...this.props.movieBase]
     const watch = e.target.value    
     if(watch === 'all') {
         this.setState({
-        output: this.props.movieBase
+        output
       })
     }
       else if (watch !== undefined) {
-        movieBase = movieBase.filter(single => single.watch === watch)
+        output = output.filter(single => single.watch === watch)
         this.setState({
-          output: movieBase
+          output
         })
       }
     }  
@@ -84,30 +102,30 @@ export default class App extends Component{
   handleRemoveMovie = (id) => {  
     const {movieBase} = this.props    
     const index = movieBase.map(single => single.id).indexOf(id)    
-    this.props.movieBase.splice(index, 1)    
+    movieBase.splice(index, 1)    
     const watchNumber = movieBase.filter(single => single.watch === 'false').length
     const watchedNumber = movieBase.filter(single => single.watch === 'true').length   
     this.setState({
       watchNumber,
       watchedNumber,
-      output: this.props.movieBase        
+      output: movieBase        
     })
   } 
 
   handleMoveToWatched = (id) => { 
     const {movieBase} = this.props        
     const index = movieBase.map(single => single.id).indexOf(id)   
-    if(this.props.movieBase[index].watch === 'true')  {
-      this.props.movieBase[index].watch = 'false'
-    } else if (movieBase[0].watch === 'false') {
-      this.props.movieBase[index].watch = 'true'
+    if(movieBase[index].watch === 'true')  {
+      movieBase[index].watch = 'false'
+    } else if (movieBase[index].watch === 'false') {
+      movieBase[index].watch = 'true'
     }     
     const watchNumber = movieBase.filter(single => single.watch === 'false').length
     const watchedNumber = movieBase.filter(single => single.watch === 'true').length
     this.setState({
       watchNumber,
       watchedNumber,
-      output: this.props.movieBase,      
+      output: movieBase,      
     })
   }
 
